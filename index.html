@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>Python Fundamentals</title>
+
+    <meta name="description" content="A 5AM Solutions introduction to Python">
+    <meta name="author" content="Chris Lasher">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="revealjs/css/reveal.min.css">
+    <link rel="stylesheet" href="revealjs/css/theme/sky.css" id="theme">
+
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="highlighterjs/css/default.css">
+
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="revealjs/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="revealjs/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Extra CSS -->
+    <link rel="stylesheet" href="extra.css">
+  </head>
+
+  <body>
+
+    <div class="reveal">
+
+      <div class="slides">
+        <section>
+          <h1>Python</h1>
+          <h2>Fundamentals</h2>
+          <h4>or</h4>
+          <h3>How I Learned to Stop Worrying and Love the Whitespace</h3>
+          <p>
+            <small>Created by <a href="http://www.gotgenes.com/">Chris Lasher</a> of <a href="http://www.5amsolutions.com/">5AM Solutions, Inc.</a></small>
+          </p>
+          <!--<p><a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by/3.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a>.</p>-->
+        </section>
+
+        <section>
+          <section>
+            <h2>Python is...</h2>
+            <ul>
+              <li class="fragment">an <span class="fragment highlight-blue">interpreted</span>, <span class="fragment highlight-blue">dynamically-typed</span>, <span class="fragment highlight-blue">strongly-typed</span>, <span class="fragment highlight-blue">multi-paradigm</span> application language</li>
+              <li class="fragment">named for Monty Python's Flying Circus</li>
+              <li class="fragment">overseen by its creator, Guido van Rossum, a.k.a. the Benevolent Dictator For Life (BDFL)<br /><a href="http://www.flickr.com/photos/eschipul/8564955009/" title="Guido van Rossum PyCon 2013 by eschipul, on Flickr"><img src="http://farm9.staticflickr.com/8525/8564955009_b2bb0cd5ba.jpg" width="500" height="281" alt="Guido van Rossum PyCon 2013"></a></li>
+              <li class="fragment">basically awesome</li>
+          </section>
+
+          <section>
+            <h2>Python looks like...</h2>
+            <pre style="font-size: 10pt"><code class="python" data-trim contenteditable>
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
+# Copyright (c) 2011-2013 Christopher D. Lasher
+#
+# This software is released under the MIT License. Please see
+# LICENSE.txt for details.
+
+
+"""A collection of common utilities and convenient functions."""
+
+import csv
+import os.path
+
+
+class SimpleTsvDialect(csv.excel_tab):
+    """A simple tab-separated values dialect.
+
+
+    This Dialect is similar to :class:`csv.excel_tab`, but uses
+    ``'\\n'`` as the line terminator and does no special quoting.
+
+    """
+    lineterminator = '\n'
+    quoting = csv.QUOTE_NONE
+
+
+csv.register_dialect('simple_tsv', SimpleTsvDialect)
+
+
+def make_csv_reader(csvfile, header=True, dialect=None, *args,
+                    **kwargs):
+    """Creates a CSV reader given a CSV file.
+
+    :param csvfile: a file handle to a CSV file
+    :param header: whether or not the file has header
+    :param dialect: a :class:`csv.Dialect` instance
+    :param *args: passed on to the reader
+    :param **kwargs: passed on to the reader
+
+    """
+    if dialect is None:
+        try:
+            dialect = csv.Sniffer().sniff(csvfile.read(1024))
+        except csv.Error:
+            dialect = csv.excel
+        csvfile.seek(0)
+    if header:
+        csv_reader = csv.DictReader(csvfile, dialect=dialect, *args,
+                **kwargs)
+    else:
+        csv_reader = csv.reader(csvfile, dialect=dialect, *args,
+                **kwargs)
+    return csv_reader
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>Python is good for...</h2>
+            <ul>
+              <li class="fragment">Rapid development</li>
+              <li class="fragment">Modularity</li>
+              <li class="fragment">Readable code</li>
+              <li class="fragment">Documentation</li>
+              <li class="fragment">Glue (interfaces with C/C++ code)</li>
+              <li class="fragment">Web programming</li>
+              <li class="fragment">Science!!!</li>
+            </ul>
+            <div><a href="http://xkcd.com/303/"><img style="height: 50%" class="fragment roll-in" src="images/compiling.png" /></a><a href="http://xkcd.com/54/"><img style="height: 50%" class="fragment roll-in" src="images/science.jpg" /></a>
+            </div>
+          </section>
+
+          <section>
+            <h2>Python is bad for...</h2>
+            <ul>
+              <li class="fragment">Closed source
+                <ul>
+                  <li class="fragment">Counterpoint: awesome open source community</li>
+                </ul>
+              </li>
+              <li class="fragment">Speed
+                <ul>
+                  <li class="fragment">Counterpoint: wrap C library or use NumPy/SciPy</li>
+                </ul>
+              </li>
+              <li class="fragment">Preventing attribute access (no private/protected)
+                <ul class="fragment">
+                  <li>Counterpoint: &ldquo;We're all adults here.&rdquo;</li>
+                  <li>Counterpoint: Code conventions (prefix with underscore, e.g., <code>_private_var</code>)</li>
+                </ul>
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Python is an interpreted language</h3>
+            <div><img height=50% src="images/lebowski_intepretive_dance.jpg" /></div>
+            <ul>
+              <li>Source code files processed at runtime by interpreter</li>
+              <li>Interactive Intepreter (REPL)</li>
+            </ul>
+          </section>
+          <section>
+            <h2>Python Interpreter</h2>
+            <ul>
+              <li>Source code organized as individual scripts, modules, packages, or entire applications</li>
+              <li>Python interpreter invoked on a script or entry module</li>
+              <li>Multiple interpreter implementations
+                <ul>
+                  <li>CPython interpreter implementation usually what people mean by &ldquo;Python&rdquo;</li>
+                  <li>Jython (implemented on JVM)</li>
+                  <li>IronPython (implemented on .Net)</li>
+                  <li>PyPy (Python interpreter implemented in Python)</li>
+                </ul>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Interactive Interpreters (REPL)</h2>
+            <ul>
+              <li>Fantastic way for prototyping, exploring library APIs</li>
+              <li>Usually can be invoked by simply entering <code>python</code> into terminal</li>
+              <li>Alternative intepreters: <a href="http://ipython.org/">IPython</a></li>
+              <li>Web-based interpreters:
+                <ul>
+                  <li><a href="http://www.skulpt.org/">Skulpt</a></li>
+                  <li><a href="https://www.pythonanywhere.com/try-ipython/">PythonAnywhere</a></li>
+                  <li><a href="http://try-python.appspot.com/">Try Python! (on appspot)</a></li>
+                </ul>
+              </li>
+            </ul>
+          </section>
+          <section>
+            <h2>Presentation code conventions<h2>
+            <h3>Python script/module</h3>
+            <pre><code class="python" data-trim contenteditable>
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
+a = 1
+b = 2
+c = a + b
+print(c)
+            </code></pre>
+            <h3>Interactive Interpreter</h3>
+            <pre><code class="python" data-trim contenteditable>
+>>> a = 1
+>>> b = 2
+>>> a + b
+3
+            </code></pre>
+          </section>
+          <section>
+            <h3>Mega-bonus "executables"</h3>
+            <p>Brought to you by <a href="http://pythontutor.com/">Online Python Tutor</a></p>
+            <iframe class="tutor" src="python_tutor_demos/basicdemo.html"></iframe>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Everything is an object</h2>
+            <img src="images/objectify.jpg" />
+            <ul>
+              <li>Every entity is a first-class entity</li>
+              <li>Objects have a specific &ldquo;type&rdquo;</li>
+              <li>Variables are just references to objects</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Variables are just named references</h3>
+            <iframe class="tutor" src="python_tutor_demos/references.html"></iframe>
+          </section>
+          <section>
+            <h3>Reassigning a variable affects only that one</h3>
+            <iframe class="tutor" src="python_tutor_demos/reassign.html"></iframe>
+          </section>
+        </section>
+
+        <section>
+          <h2>Python is dynamically typed</h2>
+          <iframe class="tutor" src="python_tutor_demos/dynamic.html"></iframe>
+        </section>
+
+        <section>
+          <h2>Python is strongly typed</h2>
+          <pre><code class="python" data-trim contenteditable>
+>>> "The value is " + 2    # gives "The value is 2" ???
+          </code></pre>
+          <pre class="fragment roll-in"><code class="python" data-trim contenteditable>
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: Can't convert 'int' object to str implicitly
+          </code></pre>
+          <pre class="fragment roll-in"><code class="python" data-trim contenteditable>
+>>> "The value is " + str(2)
+'The value is 2'
+>>> "The value is {}".format(2)   # The "Pythonic" way
+'The value is 2'
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Python types fall into two categories</h2>
+          <ul>
+            <li>immutable (essentially all basic types)</li>
+            <li>mutable (essentially all containers)</li>
+          </ul>
+        </section>
+
+        <section>
+          <section>
+            <h2>Immutable types</h2>
+            <a href="http://www.flickr.com/photos/todojuanjo/3021527775/" title="Solid by Todo-Juanjo, on Flickr"><img src="http://farm4.staticflickr.com/3283/3021527775_bc006995f2.jpg" width="500" height="332" alt="Solid"></a>
+          </section>
+          <section>
+            <h2>Basic Immutable Types</h2>
+            <ul>
+              <li><code>None</code> (Python's <code>null</code>)</li>
+              <li>Numeric
+                <ul>
+                  <li>Integer: <code>-1</code>, <code>9001</code>, etc.</li>
+                  <li>Float: <code>3.1459</code></li>
+                  <li>Complex: <code>44+2j</code></li>
+                </ul>
+              </li>
+              <li>Boolean (technically subclass of integer): <code>True</code> or <code>False</code></li>
+              <li>Strings</li>
+              <li>Tuples</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Immutable types are immutable!</h2>
+            <iframe class="tutor" src="python_tutor_demos/immutable.html"></iframe>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Python strings come in two flavors</h3>
+            <ul>
+              <li>Unicode strings</li>
+              <li>Byte strings</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Unicode Strings</h2>
+            <ul>
+              <li>Default in Python 3</li>
+              <li>Handle crazy characters just fine
+                <pre><code class="python" data-trim contenteditable>
+msg = 'Wi nøt trei a høliday in Sweden this yër?'
+                </code></pre>
+              </li>
+              <li>In Python 2, prepend a <code>u</code>, </code>
+                <pre><code class="python" data-trim contenteditable>
+msg = u"See the løveli lakes"
+                </code></pre>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Byte Strings</h2>
+            <ul>
+              <li>default in Python 2</li>
+              <li>only handle 256-bit encodings (think ASCII, ISO-8859-1); explicitly encode high-level bytes</li>
+              <li>in Python 3 used for working directly with bytes</li>
+              <li>in Python 3, create by prepending a <code>b</code>
+                <pre><code class="python" data-trim contenteditable>
+msg = b'See the l\xc3\xb8veli lakes'
+                </code></pre>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Quote Types</h2>
+              <ul>
+                <li>Either single quote <code>'</code> or double quote <code>"</code> may be used; functionally equivalent</li>
+                <li>Triple-quoted strings (<code>'''</code> or <code>"""</code>) preserve whitespace:
+                  <pre><code class="python" data-trim contenteditable>
+  >>> s = '''A triple-quoted
+  ... string can
+  ...     preserve
+  ...         whitespace
+  ... '''
+  >>> s
+  'A triple-quoted\nstring can\n    preserve\n        whitespace\n'
+                  </code></pre>
+                </li>
+              </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Tuples are ordered collections</h3>
+            <ul>
+              <li>Tuples are created using parentheses:
+                <pre><code class="python" data-trim contenteditable>
+('a', 'b', 42)
+                </pre></code>
+              </li>
+              <li>Tuples can contain any other object:
+                <pre><code class="python" data-trim contenteditable>
+((1, 2),)   # single-element tuple containing another
+                </pre></code>
+              <li>Objects do not have to be of the same type</li>
+          </section>
+
+          <section>
+            <h2>Indexing</h2>
+            <pre><code class="python" data-trim contenteditable>
+>>> a = (1, 2, (3, 4))
+>>> a[0]   # access the first element
+1
+>>> a[-1]  # access the last element
+(3, 4)
+>>> a[-1][0]  # access the first element of the last element
+3
+            </code></pre>
+          </section>
+
+          <section>
+            <h2>Slicing</h2>
+            <ul>
+              <li>Access multiple elements simultaneously by slicing</li>
+              <li>Slicing syntax
+                <div style="padding: 0.4em; padding-left: 2em">
+                  variable[<i>start_index</i>:<i>stop_index</i>:<i>step_size</i>]
+                </div>
+              </li>
+              <li>Any of <i>start_index</i>, <i>stop_index</i>, and <i>step_size</i> may be omitted</li>
+              <li>Interval is zero-based, half-open; read a slice as "going from <i>start_index</i> up to, <b>but not including</b> <i>stop_index</i></li>
+            </ul>
+            <pre><code class="python" data-trim contenteditable>
+>>> a = (1, 2, 3)
+>>> a[1:3]
+(2, 3)
+>>> a[1:]
+(2, 3)
+>>> a[:2]
+(1, 2)
+>>> a[::2]
+(1, 3)
+            </code></pre>
+          </section>
+        </section>
+
+        <section>
+          <h2>Iterable Types</h2>
+          <ul>
+            <li>Lists</li>
+            <li>Dictionaries</li>
+            <li>Sets</li>
+          </ul>
+          <div>
+            <a href="http://www.flickr.com/photos/the_pink_princess/370896570/" title="Playdoh Rainbow by The Pink Princess, on Flickr"><img src="http://farm1.staticflickr.com/145/370896570_354897a33a.jpg" width="500" height="375" alt="Playdoh Rainbow"></a>
+          </div>
+        </section>
+
+        <section>
+          <section>
+            <h2>Lists</h2>
+            <ul>
+              <li>Mutable collections of other objects</li>
+              <li>vs. tuples: When in doubt, use lists</li>
+              <li>Indexing and slicing work as tuples</li>
+                <pre><code class="python" data-trim contenteditable>
+>>> a = [81, 82, 83]
+>>> a[0]
+81
+>>> a[1]
+82
+>>> a[:2]
+[81, 82]
+                </pre></code>
+              </li>
+              <li>Can reassign to lists
+                <pre><code class="python" data-trim contenteditable>
+>>> a
+[81, 82, 83]
+>>> a[0] = 'spam'
+>>> a
+['spam', 82, 83]
+                </pre></code>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Mutable, mutable lists</h2>
+            <pre><code class="python" data-trim contenteditable>
+>>> a
+['spam', 82, 83]
+>>> a.index('spam')
+0
+>>> del a[0]
+>>> a
+[82, 83]
+>>> a.remove(83)
+>>> a
+[82]
+>>> elem = a.pop()
+>>> elem
+82
+>>> a
+[]
+>>> a.append(elem)
+>>> a
+[82]
+>>> a.insert(0, 81)
+>>> a
+[81, 82]
+>>> a.extend([83, 84, 85])
+>>> a
+[81, 82, 83, 84, 85]
+>>> a[1:1] = ['happy', 'joy']
+>>> a
+[81, 'happy', 'joy', 82, 83, 84, 85]
+            </code></pre>
+          </section>
+
+        </section>
+
+        <section>
+          <h3>Altering mutable objects may cause side-effects</h3>
+          <iframe class="tutor" src="python_tutor_demos/mutablelists.html"></iframe>
+        </section>
+
+        <section>
+          <h2>Truthiness</h2>
+        </section>
+
+        <section>
+          <h2>Flow control</h2>
+        </section>
+
+        <section>
+          <h2>Functions</h2>
+        </section>
+
+        <section>
+          <h2>Classes</h2>
+        </section>
+
+        <section>
+          <h2>Importing other modules</h2>
+        </section>
+
+        <section>
+          <h2>Packaging</h2>
+        </section>
+
+      </div>
+    </div>
+
+    <script src="revealjs/lib/js/head.min.js"></script>
+    <script src="revealjs/js/reveal.min.js"></script>
+
+    <script>
+
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+          { src: 'revealjs/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'revealjs/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'revealjs/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'revealjs/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'revealjs/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+          { src: 'revealjs/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'revealjs/plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+          // { src: 'revealjs/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,6 @@
+[submodule "revealjs"]
+	path = revealjs
+	url = git://github.com/hakimel/reveal.js.git
+[submodule "OnlinePythonTutor"]
+	path = OnlinePythonTutor
+	url = git://github.com/pgbovine/OnlinePythonTutor.git
